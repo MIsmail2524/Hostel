@@ -1,0 +1,37 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "kamra-api",
+      "runtimeExecutable": "/home/ismail-sheikh/Desktop/Hostel/backend/.venv/bin/uvicorn",
+      "runtimeArgs": [
+        "app.main:app",
+        "--app-dir",
+        "/home/ismail-sheikh/Desktop/Hostel/backend",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8090"
+      ],
+      "port": 8090
+    },
+    {
+      "name": "kamra-web",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "/home/ismail-sheikh/Desktop/Hostel/mobile/scripts/serve_web.py",
+        "8082"
+      ],
+      "port": 8082
+    },
+    {
+      "name": "kamra-mobile-dev",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "cd /home/ismail-sheikh/Desktop/Hostel/mobile && EXPO_OFFLINE=1 npx expo start --web --port 8083"
+      ],
+      "port": 8083
+    }
+  ]
+}

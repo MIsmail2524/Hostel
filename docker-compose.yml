@@ -1,0 +1,38 @@
+# Local/staging stack: Postgres + Redis + API + dedicated reconstruction worker.
+# Usage: KAMRA_JWT_SECRET=$(python3 -c "import secrets;print(secrets.token_urlsafe(48))") docker compose up --build
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: kamra
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-kamra_dev_pw}
+      POSTGRES_DB: kamra
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U kamra"], interval: 5s, retries: 10 }
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+  api:
+    build: ./backend
+    environment: &env
+      KAMRA_ENV: ${KAMRA_ENV:-development}
+      KAMRA_DATABASE_URL: postgresql+psycopg://kamra:${POSTGRES_PASSWORD:-kamra_dev_pw}@db:5432/kamra
+      KAMRA_REDIS_URL: redis://redis:6379/0
+      KAMRA_JWT_SECRET: ${KAMRA_JWT_SECRET:?set KAMRA_JWT_SECRET}
+      KAMRA_PUBLIC_BASE_URL: ${KAMRA_PUBLIC_BASE_URL:-http://localhost:8090}
+      KAMRA_CORS_ORIGINS: ${KAMRA_CORS_ORIGINS:-http://localhost:8082}
+      KAMRA_VIEWER_FRAME_ANCESTORS: "'self',${KAMRA_CORS_ORIGINS:-http://localhost:8082}"
+      KAMRA_RUN_WORKER_IN_PROCESS: "false"
+    volumes: [media:/data/storage]
+    ports: ["8090:8090"]
+    depends_on: { db: { condition: service_healthy }, redis: { condition: service_started } }
+  worker:
+    build: ./backend
+    command: ["python", "-m", "app.recon.worker"]
+    environment: *env
+    volumes: [media:/data/storage]
+    depends_on: { db: { condition: service_healthy } }
+    deploy: { resources: { limits: { cpus: "4", memory: 4g } } }
+volumes:
+  pgdata:
+  media:

@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "Kamra",
+    "slug": "kamra",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "pk.kamra.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Kamra uses the camera to capture photos and videos of your room for listings and 3D tours.",
+        "NSPhotoLibraryUsageDescription": "Kamra lets you choose photos and videos of your space to upload."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "pk.kamra.app",
+      "permissions": [
+        "CAMERA"
+      ],
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Kamra lets you choose photos and videos of your space to upload.",
+          "cameraPermission": "Kamra uses the camera to capture your room for listings and 3D tours.",
+          "microphonePermission": false
+        }
+      ],
+      "expo-font"
+    ],
+    "scheme": "kamra",
+    "extra": {
+      "apiUrl": "http://localhost:8090"
+    }
+  }
+}
